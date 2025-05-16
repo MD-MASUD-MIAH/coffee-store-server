@@ -30,7 +30,7 @@ async function run() {
     );
 
     const UserColletion = client.db("coffee").collection("coffeeData");
-
+     const singUserColl = client.db("coffee").collection("user")
     app.get("/coffee", async (req, res) => {
       const result = await UserColletion.find().toArray();
 
@@ -77,6 +77,62 @@ async function run() {
       const result = await UserColletion.deleteOne(query);
       res.send(result);
     });
+
+//  --------------------- foruser data ------------------- 
+app.get('/user',async(req,res)=>{
+
+
+  const result = await singUserColl.find().toArray() 
+  res.send(result)
+})
+
+
+
+app.post('/user',async(req,res)=>{
+
+
+  const usr = req.body 
+  const result = await singUserColl.insertOne(usr) 
+ 
+  console.log(usr);
+  
+  res.send(result)
+})
+
+app.patch('/user', async(req,res)=>{
+
+ const {email,lastSignInTime
+} = req.body 
+const filter = {email: email} 
+
+const updateDoc = {
+ $set : {
+   lastSignInTime:lastSignInTime
+ }
+
+
+}
+const result = await  singUserColl.updateOne(filter,updateDoc)
+  res.send(result)
+  
+})
+
+
+app.delete('/user/:id',async(req,res)=>{
+
+const  id = req.params.id
+console.log(id);
+const query = {_id:new ObjectId(id)}
+ 
+
+ const result = await singUserColl.deleteOne(query)
+res.send(result)
+
+
+})
+
+
+
   } finally {
   }
 }
